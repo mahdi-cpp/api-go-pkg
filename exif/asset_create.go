@@ -3,7 +3,6 @@ package asset_create
 import (
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/mahdi-cpp/PhotoKit/utils"
 	"github.com/mahdi-cpp/api-go-pkg/common_models"
 	"image"
 	"log"
@@ -244,7 +243,7 @@ func CreateOnlyDatabase(userId int) {
 					}
 				}
 
-				cMake, cModel, err := utils.GetCameraModel(a)
+				cMake, cModel, err := GetCameraModel(a)
 				if err != nil {
 					log.Printf("Warning: error getting camera info: %v", err)
 					cameraMake = ""
