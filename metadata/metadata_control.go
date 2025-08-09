@@ -2,6 +2,7 @@ package metadata
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"sync"
 )
@@ -17,15 +18,18 @@ func NewMetadataControl[T any](filePath string) *Control[T] {
 	}
 }
 
-func (control *Control[T]) Read() (*T, error) {
+func (control *Control[T]) Read(requireExist bool) (*T, error) {
 	control.mutex.RLock()
 	defer control.mutex.RUnlock()
 
 	data := new(T)
 	file, err := os.ReadFile(control.filePath)
 	if err != nil {
-		if os.IsNotExist(err) {
-			return nil, err
+		if os.IsNotExist(err) && requireExist {
+			return nil, fmt.Errorf("file %s does not exist", control.filePath)
+		}
+		if os.IsNotExist(err) { // If not requiring existence, return empty data
+			return data, nil
 		}
 		return nil, err
 	}
