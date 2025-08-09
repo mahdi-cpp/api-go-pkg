@@ -3,7 +3,7 @@ package asset_create
 import (
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/mahdi-cpp/api-go-pkg/model"
+	"github.com/mahdi-cpp/api-go-pkg/shared_model"
 	"image"
 	"log"
 	"os"
@@ -140,7 +140,7 @@ func CreateAssetOfUploadDirectory() {
 				isAssetScreenshot = true
 			}
 
-			asset := model.PHAsset{
+			asset := shared_model.PHAsset{
 				ID:          idCounter,
 				UserID:      2,
 				Url:         strconv.Itoa(idCounter),
@@ -276,7 +276,7 @@ func CreateOnlyDatabase(userId int) {
 				height = h
 			}
 
-			newPHAsset := model.PHAsset{
+			newPHAsset := shared_model.PHAsset{
 				UserID:      userId,
 				Url:         named,
 				MediaType:   "image",

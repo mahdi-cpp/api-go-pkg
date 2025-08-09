@@ -3,7 +3,7 @@ package asset_create
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mahdi-cpp/api-go-pkg/model"
+	"github.com/mahdi-cpp/api-go-pkg/shared_model"
 	"io"
 	"os"
 	"path/filepath"
@@ -21,7 +21,7 @@ func GetMetadataPath(id int) string {
 }
 
 // SaveAssetMetadata saves a PHAsset to a JSON file
-func SaveAssetMetadata(asset model.PHAsset) error {
+func SaveAssetMetadata(asset shared_model.PHAsset) error {
 
 	// Create filename based on ID and creation date
 	//filename := filepath.Join(AppDir+username+MetadataDir, asset.ID+".json")

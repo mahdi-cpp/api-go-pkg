@@ -6,10 +6,10 @@ import (
 	"strings"
 )
 
-// GetCameraModel returns the camera make and model from the EXIF data of an image file
+// GetCameraModel returns the camera make and shared_model from the EXIF data of an image file
 // Returns:
 // - make: Camera manufacturer (empty string if not found)
-// - model: Camera model (empty string if not found)
+// - shared_model: Camera shared_model (empty string if not found)
 // - err: Error if any occurred
 func GetCameraModel(filepath string) (make, model string, err error) {
 
@@ -43,7 +43,7 @@ func GetCameraModel(filepath string) (make, model string, err error) {
 		return "", false
 	}
 
-	// Get camera make and model
+	// Get camera make and shared_model
 	make, _ = findTag("CameraMake")
 	model, _ = findTag("CameraModel")
 

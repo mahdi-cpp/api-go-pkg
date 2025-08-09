@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
-	"github.com/mahdi-cpp/api-go-pkg/model"
 	"github.com/mahdi-cpp/api-go-pkg/registery"
+	"github.com/mahdi-cpp/api-go-pkg/shared_model"
 	"sort"
 	"strconv"
 	"time"
@@ -25,7 +25,7 @@ type CollectionItem interface {
 type Manager[T CollectionItem] struct {
 	metadata   *metadata.Control[[]T]
 	items      *registery.Registry[T]
-	ItemAssets map[int][]*model.PHAsset
+	ItemAssets map[int][]*shared_model.PHAsset
 }
 
 type SortOptions struct {
@@ -38,7 +38,7 @@ func NewCollectionManager[T CollectionItem](path string, requireExist bool) (*Ma
 	manager := &Manager[T]{
 		items:      registery.NewRegistry[T](),
 		metadata:   metadata.NewMetadataControl[[]T](path),
-		ItemAssets: make(map[int][]*model.PHAsset),
+		ItemAssets: make(map[int][]*shared_model.PHAsset),
 	}
 
 	items, err := manager.load(requireExist)
@@ -157,7 +157,7 @@ func (manager *Manager[T]) GetBy(filterFunc func(T) bool) ([]T, error) {
 	return result, nil
 }
 
-func (manager *Manager[T]) GetItemAssets(id int) ([]*model.PHAsset, error) {
+func (manager *Manager[T]) GetItemAssets(id int) ([]*shared_model.PHAsset, error) {
 	return manager.ItemAssets[id], nil
 }
 

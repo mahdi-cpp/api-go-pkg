@@ -26,5 +26,19 @@
     "lastSeen": "0001-01-01T00:00:00Z",
     "creationDate": "2025-08-09T14:32:50.320981318+03:30",
     "modificationDate": "2025-08-09T14:32:50.32098139+03:30"
+  },
+  {
+    "id": 3,
+    "username": "",
+    "phoneNumber": "",
+    "email": "",
+    "firstName": "Original",
+    "lastName": "",
+    "bio": "",
+    "avatarURL": "",
+    "isOnline": false,
+    "lastSeen": "0001-01-01T00:00:00Z",
+    "creationDate": "2025-08-09T14:37:20.35719739+03:30",
+    "modificationDate": "2025-08-09T14:37:20.357197456+03:30"
   }
 ]

@@ -1,4 +1,4 @@
-package model
+package shared_model
 
 type AppConfig struct {
 	Version  string   `json:"version"`
