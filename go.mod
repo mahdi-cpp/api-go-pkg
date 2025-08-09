@@ -9,7 +9,6 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 )
 
-
 require (
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect

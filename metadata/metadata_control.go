@@ -25,7 +25,7 @@ func (control *Control[T]) Read() (*T, error) {
 	file, err := os.ReadFile(control.filePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return data, nil
+			return nil, err
 		}
 		return nil, err
 	}
