@@ -33,7 +33,7 @@ type SortOptions struct {
 	SortOrder string // "asc", "desc"
 }
 
-func NewCollectionManager[T CollectionItem](path string) (*Manager[T], error) {
+func NewCollectionManager[T CollectionItem](path string, requireExist bool) (*Manager[T], error) {
 
 	manager := &Manager[T]{
 		items:      registery.NewRegistry[T](),
@@ -41,7 +41,7 @@ func NewCollectionManager[T CollectionItem](path string) (*Manager[T], error) {
 		ItemAssets: make(map[int][]*common_models.PHAsset),
 	}
 
-	items, err := manager.load()
+	items, err := manager.load(requireExist)
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize collection manager: %w", err)
 	}
@@ -53,8 +53,8 @@ func NewCollectionManager[T CollectionItem](path string) (*Manager[T], error) {
 	return manager, nil
 }
 
-func (manager *Manager[T]) load() ([]T, error) {
-	dataPtr, err := manager.metadata.Read()
+func (manager *Manager[T]) load(requireExist bool) ([]T, error) {
+	dataPtr, err := manager.metadata.Read(requireExist)
 	if err != nil {
 		return nil, err
 	}

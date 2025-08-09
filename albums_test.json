@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "username": "",
+    "phoneNumber": "",
+    "email": "",
+    "firstName": "Original",
+    "lastName": "",
+    "bio": "",
+    "avatarURL": "",
+    "isOnline": false,
+    "lastSeen": "0001-01-01T00:00:00Z",
+    "creationDate": "2025-08-09T13:38:21.389367762+03:30",
+    "modificationDate": "2025-08-09T13:38:21.389367841+03:30"
+  }
+]

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/mahdi-cpp/api-go-pkg/collection"
 	"github.com/mahdi-cpp/api-go-pkg/common_models"
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
 	"github.com/mahdi-cpp/api-go-pkg/network"
@@ -10,12 +11,30 @@ import (
 )
 
 func main() {
-	testInfoPlist()
+	testCollection2()
+}
+
+func testCollection2() {
+	users, err := collection.NewCollectionManager[*common_models.User]("albums_test.json", false)
+	if err != nil {
+		fmt.Println("UserStorage:", err)
+		return
+	}
+
+	item := &common_models.User{FirstName: "Original"}
+	create, err := users.Create(item)
+	if err != nil {
+		return
+	}
+
+	fmt.Println(create.FirstName)
+
+	//fmt.Println(createdItem.ID))
 }
 
 func testInfoPlist() {
 	infoPlist := metadata.NewMetadataControl[common_models.InfoPlist]("/media/mahdi/Cloud/Happle/com.helium.settings/Info.json")
-	a, err := infoPlist.Read()
+	a, err := infoPlist.Read(true)
 	if err != nil {
 		fmt.Println(err)
 		return
