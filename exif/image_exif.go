@@ -2,7 +2,7 @@ package asset_create
 
 import (
 	"fmt"
-	"github.com/mahdi-cpp/api-go-pkg/common_models"
+	"github.com/mahdi-cpp/api-go-pkg/model"
 	"image"
 	"os"
 	"os/exec"
@@ -79,20 +79,20 @@ func (e *ImageExtractor) extractBasicMetadata(filePath string) (int, int, string
 }
 
 // GetMediaType determines media type from filename
-func GetMediaType(filename string) common_models.MediaType {
+func GetMediaType(filename string) model.MediaType {
 	ext := strings.ToLower(filepath.Ext(filename))
 	switch ext {
 	case ".jpg", ".jpeg":
-		return common_models.ImageTypeJPEG
+		return model.ImageTypeJPEG
 	case ".png":
-		return common_models.ImageTypePNG
+		return model.ImageTypePNG
 	case ".gif":
-		return common_models.ImageTypeGIF
+		return model.ImageTypeGIF
 	case ".mp4":
-		return common_models.VideoTypeMP4
+		return model.VideoTypeMP4
 	case ".mov":
-		return common_models.VideoTypeMOV
+		return model.VideoTypeMOV
 	default:
-		return common_models.UnknownType
+		return model.UnknownType
 	}
 }

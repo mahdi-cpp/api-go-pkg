@@ -1,4 +1,4 @@
-package common_models
+package model
 
 // InfoPlist represents the top-level structure of an Info.plist file.
 type InfoPlist struct {

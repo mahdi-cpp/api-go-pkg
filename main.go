@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/mahdi-cpp/api-go-pkg/collection"
-	"github.com/mahdi-cpp/api-go-pkg/common_models"
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
+	"github.com/mahdi-cpp/api-go-pkg/model"
 	"github.com/mahdi-cpp/api-go-pkg/network"
 	"github.com/mahdi-cpp/api-go-pkg/plistcontrol"
 	"log"
@@ -15,13 +15,13 @@ func main() {
 }
 
 func testCollection2() {
-	users, err := collection.NewCollectionManager[*common_models.User]("albums_test.json", false)
+	users, err := collection.NewCollectionManager[*model.User]("albums_test.json", false)
 	if err != nil {
 		fmt.Println("UserStorage:", err)
 		return
 	}
 
-	item := &common_models.User{FirstName: "Original"}
+	item := &model.User{FirstName: "Original"}
 	create, err := users.Create(item)
 	if err != nil {
 		return
@@ -33,7 +33,7 @@ func testCollection2() {
 }
 
 func testInfoPlist() {
-	infoPlist := metadata.NewMetadataControl[common_models.InfoPlist]("/media/mahdi/Cloud/Happle/com.helium.settings/Info.json")
+	infoPlist := metadata.NewMetadataControl[model.InfoPlist]("/media/mahdi/Cloud/Happle/com.helium.settings/Info.json")
 	a, err := infoPlist.Read(true)
 	if err != nil {
 		fmt.Println(err)
@@ -44,7 +44,7 @@ func testInfoPlist() {
 
 func testNetwork() {
 
-	userControl := network.NewNetworkControl[[]common_models.User]("http://localhost:8080/api/v1/user/")
+	userControl := network.NewNetworkControl[[]model.User]("http://localhost:8080/api/v1/user/")
 
 	// Make request (nil body if not needed)
 	users, err := userControl.Read("list", nil)

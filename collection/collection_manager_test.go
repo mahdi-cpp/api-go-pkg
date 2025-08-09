@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mahdi-cpp/api-go-pkg/common_models"
+	"github.com/mahdi-cpp/api-go-pkg/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -222,7 +222,7 @@ func TestGetItemAssets(t *testing.T) {
 	require.NoError(t, err)
 
 	// Add assets to the item
-	assets := []*common_models.PHAsset{
+	assets := []*model.PHAsset{
 		{ID: 1, Filename: "Asset 1"},
 		{ID: 2, Filename: "Asset 2"},
 	}
