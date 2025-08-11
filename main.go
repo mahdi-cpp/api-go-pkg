@@ -16,13 +16,14 @@ import (
 func main() {
 	//testCollection2()
 	//textCollectionControl()
-	testAccount()
+	testAccount(4)
+	//testAccountUserList()
 }
 
-func testAccount() {
+func testAccount(id int) {
 
 	ac := account.NewAccountManager()
-	user, err := ac.GetUser(3)
+	user, err := ac.GetUser(id)
 	if err != nil {
 		return
 	}
@@ -30,6 +31,22 @@ func testAccount() {
 	fmt.Printf("User ID: %d\n", user.ID)
 	fmt.Printf("Username: %s\n", user.Username)
 	fmt.Printf("Name: %s %s\n", user.FirstName, user.LastName)
+
+}
+
+func testAccountUserList() {
+
+	ac := account.NewAccountManager()
+	users, err := ac.GetAll()
+	if err != nil {
+		return
+	}
+
+	for _, user := range *users {
+		fmt.Printf("User ID: %d\n", user.ID)
+		fmt.Printf("Username: %s\n", user.Username)
+		fmt.Printf("Name: %s %s\n", user.FirstName, user.LastName)
+	}
 
 }
 

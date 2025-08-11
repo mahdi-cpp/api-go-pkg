@@ -1,18 +1,18 @@
 package account
 
 import (
-	"github.com/mahdi-cpp/api-go-pkg/asset"
 	"github.com/mahdi-cpp/api-go-pkg/network"
 	"log"
 )
 
-type UserPHCollection struct {
-	Collections []*asset.PHCollection[User] `json:"collections"`
-}
+//type UserPHCollection struct {
+//	Collections []*asset.PHCollection[User] `json:"collections"`
+//}
 
 type Manager struct {
-	networkUser  *network.Control[User]
-	networkUsers *network.Control[UserPHCollection]
+	networkUser     *network.Control[User]
+	networkUserList *network.Control[[]User]
+	//networkUsers *network.Control[UserPHCollection]
 }
 
 type requestBody struct {
@@ -21,8 +21,8 @@ type requestBody struct {
 
 func NewAccountManager() *Manager {
 	manager := &Manager{
-		networkUser:  network.NewNetworkManager[User]("http://localhost:8080/api/v1/user/get_user"),
-		networkUsers: network.NewNetworkManager[UserPHCollection]("http://localhost:8080/api/v1/"),
+		networkUser:     network.NewNetworkManager[User]("http://localhost:8080/api/v1/user/get_user"),
+		networkUserList: network.NewNetworkManager[[]User]("http://localhost:8080/api/v1/user/list"),
 	}
 
 	return manager
@@ -36,4 +36,14 @@ func (m *Manager) GetUser(id int) (*User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func (m *Manager) GetAll() (*[]User, error) {
+
+	users, err := m.networkUserList.Read("", nil)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+		return nil, err
+	}
+	return users, nil
 }
