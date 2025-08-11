@@ -10,6 +10,13 @@ const (
 	SongType  MediaType = "song"
 )
 
+func (a *PHAsset) SetID(id int)                    { a.ID = id }
+func (a *PHAsset) SetCreationDate(t time.Time)     { a.CreationDate = t }
+func (a *PHAsset) SetModificationDate(t time.Time) { a.ModificationDate = t }
+func (a *PHAsset) GetID() int                      { return a.ID }
+func (a *PHAsset) GetCreationDate() time.Time      { return a.CreationDate }
+func (a *PHAsset) GetModificationDate() time.Time  { return a.ModificationDate }
+
 type PHAsset struct {
 	ID                  int       `json:"id"`
 	UserID              int       `json:"userId"`
