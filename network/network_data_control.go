@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -20,7 +19,7 @@ type Control[T any] struct {
 	mutex      sync.RWMutex
 }
 
-func NewNetworkControl[T any](baseURL string) *Control[T] {
+func NewNetworkManager[T any](baseURL string) *Control[T] {
 	return &Control[T]{
 		baseURL:    baseURL,
 		httpClient: &http.Client{Timeout: 10 * time.Second},
@@ -31,7 +30,7 @@ func (control *Control[T]) Read(endpoint string, requestBody interface{}) (*T, e
 	control.mutex.RLock()
 	defer control.mutex.RUnlock()
 
-	startTime := time.Now()
+	//startTime := time.Now()
 
 	// Prepare request body
 	var body io.Reader
@@ -50,6 +49,7 @@ func (control *Control[T]) Read(endpoint string, requestBody interface{}) (*T, e
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("userID", "1")
 
 	// Execute request
 	resp, err := control.httpClient.Do(req)
@@ -87,8 +87,8 @@ func (control *Control[T]) Read(endpoint string, requestBody interface{}) (*T, e
 	}
 
 	//Log performance
-	duration := time.Since(startTime)
-	log.Printf("Search:  (in %v)", duration)
+	//duration := time.Since(startTime)
+	//log.Printf("Search:  (in %v)", duration)
 
 	return data, nil
 }

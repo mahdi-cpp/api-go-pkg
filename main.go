@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/mahdi-cpp/api-go-pkg/account"
-	"github.com/mahdi-cpp/api-go-pkg/collection"
-	"github.com/mahdi-cpp/api-go-pkg/collection_controll"
+	"github.com/mahdi-cpp/api-go-pkg/collection_manager"
+	"github.com/mahdi-cpp/api-go-pkg/depricated/collection"
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
 	"github.com/mahdi-cpp/api-go-pkg/network"
 	"github.com/mahdi-cpp/api-go-pkg/plistcontrol"
@@ -15,12 +15,27 @@ import (
 
 func main() {
 	//testCollection2()
-	textCollectionControl()
+	//textCollectionControl()
+	testAccount()
+}
+
+func testAccount() {
+
+	ac := account.NewAccountManager()
+	user, err := ac.GetUser(3)
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("User ID: %d\n", user.ID)
+	fmt.Printf("Username: %s\n", user.Username)
+	fmt.Printf("Name: %s %s\n", user.FirstName, user.LastName)
+
 }
 
 func textCollectionControl() {
 
-	MessageManager, err := collection_controll.NewCollectionManager[*test_model.Message]("/media/mahdi/Cloud/Happle/com.helium.messages/chats/7/messages", true)
+	MessageManager, err := collection_manager.NewCollectionManager[*test_model.Message]("/media/mahdi/Cloud/Happle/com.helium.messages/chats/7/messages", true)
 	if err != nil {
 		return
 	}
@@ -76,7 +91,7 @@ func testInfoPlist() {
 
 func testNetwork() {
 
-	userControl := network.NewNetworkControl[[]account.User]("http://localhost:8080/api/v1/user/")
+	userControl := network.NewNetworkManager[[]account.User]("http://localhost:8080/api/v1/user/")
 
 	// Make request (nil body if not needed)
 	users, err := userControl.Read("list", nil)

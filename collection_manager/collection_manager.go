@@ -1,4 +1,4 @@
-package collection_controll
+package collection_manager
 
 import (
 	"errors"

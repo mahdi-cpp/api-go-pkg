@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/mahdi-cpp/api-go-pkg/shared_model"
+	"github.com/mahdi-cpp/api-go-pkg/asset"
 	"log"
 	"os"
 	"path/filepath"
@@ -25,7 +25,7 @@ func NewMetadataManager(dir string) *AssetMetadataManager {
 	}
 }
 
-func (m *AssetMetadataManager) SaveMetadata(asset *shared_model.PHAsset) error {
+func (m *AssetMetadataManager) SaveMetadata(asset *asset.PHAsset) error {
 	path := m.getMetadataPath(asset.ID)
 
 	data, err := json.MarshalIndent(asset, "", "  ")
@@ -42,7 +42,7 @@ func (m *AssetMetadataManager) SaveMetadata(asset *shared_model.PHAsset) error {
 	return os.Rename(tmpPath, path)
 }
 
-func (m *AssetMetadataManager) LoadMetadata(id int) (*shared_model.PHAsset, error) {
+func (m *AssetMetadataManager) LoadMetadata(id int) (*asset.PHAsset, error) {
 	path := m.getMetadataPath(id)
 
 	data, err := os.ReadFile(path)
@@ -53,7 +53,7 @@ func (m *AssetMetadataManager) LoadMetadata(id int) (*shared_model.PHAsset, erro
 		return nil, fmt.Errorf("failed to read metadata: %w", err)
 	}
 
-	var asset shared_model.PHAsset
+	var asset asset.PHAsset
 	if err := json.Unmarshal(data, &asset); err != nil {
 		return nil, fmt.Errorf("failed to parse metadata: %w", err)
 	}
@@ -61,11 +61,11 @@ func (m *AssetMetadataManager) LoadMetadata(id int) (*shared_model.PHAsset, erro
 	return &asset, nil
 }
 
-func (m *AssetMetadataManager) LoadUserAllMetadata() (map[int]*shared_model.PHAsset, error) {
+func (m *AssetMetadataManager) LoadUserAllMetadata() (map[int]*asset.PHAsset, error) {
 
 	startTime := time.Now() // Capture start time
 
-	var assets = make(map[int]*shared_model.PHAsset)
+	var assets = make(map[int]*asset.PHAsset)
 
 	// Scan metadata directory
 	files, err := os.ReadDir(m.dir)
