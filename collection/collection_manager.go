@@ -2,6 +2,8 @@ package collection
 
 // https://chat.deepseek.com/a/chat/s/9b010f32-b23d-4f9b-ae0c-31a9b2c9408c
 
+// https://chat.deepseek.com/a/chat/s/d240fa60-af6b-4537-a04e-d34fc995cc80
+
 import (
 	"errors"
 	"fmt"

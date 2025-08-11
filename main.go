@@ -3,15 +3,46 @@ package main
 import (
 	"fmt"
 	"github.com/mahdi-cpp/api-go-pkg/collection"
+	"github.com/mahdi-cpp/api-go-pkg/collection_controll"
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
 	"github.com/mahdi-cpp/api-go-pkg/network"
 	"github.com/mahdi-cpp/api-go-pkg/plistcontrol"
 	"github.com/mahdi-cpp/api-go-pkg/shared_model"
+	"github.com/mahdi-cpp/api-go-pkg/test_model"
 	"log"
 )
 
 func main() {
-	testCollection2()
+	//testCollection2()
+	textCollectionControl()
+}
+
+func textCollectionControl() {
+
+	MessageManager, err := collection_controll.NewCollectionManager[*test_model.Message]("/media/mahdi/Cloud/Happle/com.helium.messages/chats/chat_1/messages", true)
+	if err != nil {
+		return
+	}
+
+	fmt.Println()
+
+	messages, err := MessageManager.GetAll()
+	if err != nil {
+		fmt.Printf("Error getting all messages: %v\n", err)
+		return
+	}
+
+	fmt.Println("All Messages:")
+	for _, album := range messages {
+		fmt.Printf("  ID: %d, Content: \"%s,              Type: %s \n", album.ID, album.Content, album.Type)
+	}
+
+	//album, err := MessageManager.Get(4)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	//fmt.Println(album.Title)
 }
 
 func testCollection2() {
