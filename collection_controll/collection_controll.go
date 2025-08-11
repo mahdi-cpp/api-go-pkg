@@ -3,6 +3,7 @@ package collection_controll
 import (
 	"errors"
 	"fmt"
+	"github.com/mahdi-cpp/api-go-pkg/asset"
 	"os"
 	"path/filepath"
 	"sort"
@@ -12,7 +13,6 @@ import (
 
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
 	"github.com/mahdi-cpp/api-go-pkg/registery"
-	"github.com/mahdi-cpp/api-go-pkg/shared_model"
 )
 
 // https://chat.deepseek.com/a/chat/s/d240fa60-af6b-4537-a04e-d34fc995cc80
@@ -181,7 +181,7 @@ func (d *directoryStorage[T]) DeleteItem(id int) error {
 type Manager[T CollectionItem] struct {
 	storage    storage[T]
 	items      *registery.Registry[T]
-	ItemAssets map[int][]*shared_model.PHAsset
+	ItemAssets map[int][]*asset.PHAsset
 }
 
 type SortOptions struct {
@@ -210,7 +210,7 @@ func NewCollectionManager[T CollectionItem](path string, requireExist bool) (*Ma
 	manager := &Manager[T]{
 		storage:    store,
 		items:      registery.NewRegistry[T](),
-		ItemAssets: make(map[int][]*shared_model.PHAsset),
+		ItemAssets: make(map[int][]*asset.PHAsset),
 	}
 
 	items, err := manager.storage.ReadAll(requireExist)
@@ -291,7 +291,7 @@ func (manager *Manager[T]) GetBy(filterFunc func(T) bool) ([]T, error) {
 	return manager.GetList(filterFunc)
 }
 
-func (manager *Manager[T]) GetItemAssets(id int) ([]*shared_model.PHAsset, error) {
+func (manager *Manager[T]) GetItemAssets(id int) ([]*asset.PHAsset, error) {
 	return manager.ItemAssets[id], nil
 }
 

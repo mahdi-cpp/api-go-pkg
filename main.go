@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/mahdi-cpp/api-go-pkg/account"
 	"github.com/mahdi-cpp/api-go-pkg/collection"
 	"github.com/mahdi-cpp/api-go-pkg/collection_controll"
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
@@ -19,7 +20,7 @@ func main() {
 
 func textCollectionControl() {
 
-	MessageManager, err := collection_controll.NewCollectionManager[*test_model.Message]("/media/mahdi/Cloud/Happle/com.helium.messages/chats/chat_1/messages", true)
+	MessageManager, err := collection_controll.NewCollectionManager[*test_model.Message]("/media/mahdi/Cloud/Happle/com.helium.messages/chats/7/messages", true)
 	if err != nil {
 		return
 	}
@@ -46,13 +47,13 @@ func textCollectionControl() {
 }
 
 func testCollection2() {
-	users, err := collection.NewCollectionManager[*shared_model.User]("albums_test.json", false)
+	users, err := collection.NewCollectionManager[*account.User]("albums_test.json", false)
 	if err != nil {
 		fmt.Println("UserStorage:", err)
 		return
 	}
 
-	item := &shared_model.User{FirstName: "Original"}
+	item := &account.User{FirstName: "Original"}
 	create, err := users.Create(item)
 	if err != nil {
 		return
@@ -75,7 +76,7 @@ func testInfoPlist() {
 
 func testNetwork() {
 
-	userControl := network.NewNetworkControl[[]shared_model.User]("http://localhost:8080/api/v1/user/")
+	userControl := network.NewNetworkControl[[]account.User]("http://localhost:8080/api/v1/user/")
 
 	// Make request (nil body if not needed)
 	users, err := userControl.Read("list", nil)

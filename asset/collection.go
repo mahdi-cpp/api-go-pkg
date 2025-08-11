@@ -1,4 +1,4 @@
-package shared_model
+package asset
 
 import (
 	"time"
