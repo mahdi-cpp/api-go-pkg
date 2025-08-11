@@ -3,7 +3,7 @@ package thumbnail
 import (
 	"bytes"
 	"fmt"
-	"github.com/mahdi-cpp/api-go-pkg/shared_model"
+	"github.com/mahdi-cpp/api-go-pkg/asset"
 	"image/jpeg"
 	"image/png"
 	"io"
@@ -46,22 +46,22 @@ func NewThumbnailService(
 }
 
 // GenerateThumbnail generates a thumbnail for an asset
-func (s *ThumbnailService) GenerateThumbnail(asset *shared_model.PHAsset, content []byte) ([]byte, error) {
-	switch asset.MediaType {
-	case shared_model.ImageTypeJPEG, shared_model.ImageTypePNG, shared_model.ImageTypeGIF:
-		return s.generateImageThumbnail(content, asset.MediaType)
-	case shared_model.VideoTypeMP4, shared_model.VideoTypeMOV:
-		if s.videoEnabled {
-			return s.generateVideoThumbnail(asset, content)
-		}
-		return nil, fmt.Errorf("video processing disabled")
-	default:
-		return nil, fmt.Errorf("unsupported media type: %s", asset.MediaType)
-	}
+func (s *ThumbnailService) GenerateThumbnail(asset *asset.PHAsset, content []byte) ([]byte, error) {
+	//switch asset.MediaType {
+	//case asset.ImageTypeJPEG, asset.ImageTypePNG, asset.ImageTypeGIF:
+	//	return s.generateImageThumbnail(content, asset.MediaType)
+	//case asset.VideoTypeMP4, asset.VideoTypeMOV:
+	//	if s.videoEnabled {
+	//		return s.generateVideoThumbnail(asset, content)
+	//	}
+	//	return nil, fmt.Errorf("video processing disabled")
+	//default:
+	return nil, fmt.Errorf("unsupported media type: %s", asset.MediaType)
+	//}
 }
 
 // generateImageThumbnail creates a thumbnail from image content
-func (s *ThumbnailService) generateImageThumbnail(content []byte, mediaType shared_model.MediaType) ([]byte, error) {
+func (s *ThumbnailService) generateImageThumbnail(content []byte, mediaType asset.MediaType) ([]byte, error) {
 	// Decode image
 	img, err := imaging.Decode(bytes.NewReader(content))
 	if err != nil {
@@ -74,7 +74,7 @@ func (s *ThumbnailService) generateImageThumbnail(content []byte, mediaType shar
 	// Encode to buffer
 	var buf bytes.Buffer
 	switch mediaType {
-	case shared_model.ImageTypePNG:
+	case asset.ImageTypePNG:
 		err = png.Encode(&buf, dst)
 	default:
 		// Default to JPEG for all other types
@@ -89,7 +89,7 @@ func (s *ThumbnailService) generateImageThumbnail(content []byte, mediaType shar
 }
 
 // generateVideoThumbnail creates a thumbnail from video content
-func (s *ThumbnailService) generateVideoThumbnail(asset *shared_model.PHAsset, content []byte) ([]byte, error) {
+func (s *ThumbnailService) generateVideoThumbnail(asset *asset.PHAsset, content []byte) ([]byte, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -158,7 +158,7 @@ func (s *ThumbnailService) resizeThumbnail(thumbData []byte) ([]byte, error) {
 // GetThumbnail retrieves or generates a thumbnail for an asset
 func (s *ThumbnailService) GetThumbnail(
 	assetID int,
-	asset *shared_model.PHAsset,
+	asset *asset.PHAsset,
 	width, height int,
 ) ([]byte, error) {
 	// Try to get from storage
@@ -191,7 +191,7 @@ func (s *ThumbnailService) GetThumbnail(
 func (s *ThumbnailService) ProcessUpload(
 	file multipart.File,
 	header *multipart.FileHeader,
-	asset *shared_model.PHAsset,
+	asset *asset.PHAsset,
 ) ([]byte, error) {
 	// Read file content
 	content, err := io.ReadAll(file)
