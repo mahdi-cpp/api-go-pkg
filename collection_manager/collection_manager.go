@@ -3,7 +3,6 @@ package collection_manager
 import (
 	"errors"
 	"fmt"
-	"github.com/mahdi-cpp/api-go-pkg/asset"
 	"os"
 	"path/filepath"
 	"sort"
@@ -179,9 +178,9 @@ func (d *directoryStorage[T]) DeleteItem(id int) error {
 }
 
 type Manager[T CollectionItem] struct {
-	storage    storage[T]
-	items      *registery.Registry[T]
-	ItemAssets map[int][]*asset.PHAsset
+	storage storage[T]
+	items   *registery.Registry[T]
+	//ItemAssets map[int][]*asset.PHAsset
 }
 
 type SortOptions struct {
@@ -208,9 +207,9 @@ func NewCollectionManager[T CollectionItem](path string, requireExist bool) (*Ma
 	}
 
 	manager := &Manager[T]{
-		storage:    store,
-		items:      registery.NewRegistry[T](),
-		ItemAssets: make(map[int][]*asset.PHAsset),
+		storage: store,
+		items:   registery.NewRegistry[T](),
+		//ItemAssets: make(map[int][]*asset.PHAsset),
 	}
 
 	items, err := manager.storage.ReadAll(requireExist)
@@ -291,9 +290,9 @@ func (manager *Manager[T]) GetBy(filterFunc func(T) bool) ([]T, error) {
 	return manager.GetList(filterFunc)
 }
 
-func (manager *Manager[T]) GetItemAssets(id int) ([]*asset.PHAsset, error) {
-	return manager.ItemAssets[id], nil
-}
+//func (manager *Manager[T]) GetItemAssets(id int) ([]*asset.PHAsset, error) {
+//	return manager.ItemAssets[id], nil
+//}
 
 func (manager *Manager[T]) SortItems(items []T, options SortOptions) []T {
 	if options.SortBy == "" {
