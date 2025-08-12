@@ -16,7 +16,7 @@ type Manager struct {
 }
 
 type requestBody struct {
-	ID int `json:"id"`
+	UserID int `json:"userID"`
 }
 
 func NewAccountManager() *Manager {
@@ -30,7 +30,7 @@ func NewAccountManager() *Manager {
 
 func (m *Manager) GetUser(id int) (*User, error) {
 
-	user, err := m.networkUser.Read("", requestBody{ID: id})
+	user, err := m.networkUser.Read("", requestBody{UserID: id})
 	if err != nil {
 		log.Fatalf("Error: %v", err)
 		return nil, err
@@ -39,6 +39,16 @@ func (m *Manager) GetUser(id int) (*User, error) {
 }
 
 func (m *Manager) GetAll() (*[]User, error) {
+
+	users, err := m.networkUserList.Read("", nil)
+	if err != nil {
+		log.Fatalf("Error: %v", err)
+		return nil, err
+	}
+	return users, nil
+}
+
+func (m *Manager) GetByArray(userIDs []int) (*[]User, error) {
 
 	users, err := m.networkUserList.Read("", nil)
 	if err != nil {

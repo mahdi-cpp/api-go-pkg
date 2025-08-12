@@ -31,7 +31,6 @@ func testAccount(id int) {
 	fmt.Printf("User ID: %d\n", user.ID)
 	fmt.Printf("Username: %s\n", user.Username)
 	fmt.Printf("Name: %s %s\n", user.FirstName, user.LastName)
-
 }
 
 func testAccountUserList() {
