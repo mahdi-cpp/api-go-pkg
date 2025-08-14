@@ -1,4 +1,4 @@
-package collection_manager
+package collection_manager_uuid7
 
 import (
 	"errors"
