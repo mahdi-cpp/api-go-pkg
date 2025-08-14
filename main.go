@@ -47,6 +47,10 @@ func testAccountUserList() {
 		fmt.Printf("Name: %s %s\n", user.FirstName, user.LastName)
 	}
 
+	//var name = asset.PHAsset{}
+
+	//name.Update()
+
 }
 
 func textCollectionControl() {

@@ -1,6 +1,9 @@
 package asset
 
 import (
+	"github.com/mahdi-cpp/api-go-pkg/update"
+	"github.com/mahdi-cpp/api-go-pkg/utils"
+	"sync"
 	"time"
 )
 
@@ -10,18 +13,20 @@ const (
 	SongType  MediaType = "song"
 )
 
-func (a *PHAsset) SetID(id int)                    { a.ID = id }
-func (a *PHAsset) SetCreationDate(t time.Time)     { a.CreationDate = t }
-func (a *PHAsset) SetModificationDate(t time.Time) { a.ModificationDate = t }
-func (a *PHAsset) GetID() int                      { return a.ID }
-func (a *PHAsset) GetCreationDate() time.Time      { return a.CreationDate }
-func (a *PHAsset) GetModificationDate() time.Time  { return a.ModificationDate }
+func (p *PHAsset) SetID(id int)                    { p.ID = id }
+func (p *PHAsset) SetCreationDate(t time.Time)     { p.CreationDate = t }
+func (p *PHAsset) SetModificationDate(t time.Time) { p.ModificationDate = t }
+func (p *PHAsset) GetID() int                      { return p.ID }
+func (p *PHAsset) GetCreationDate() time.Time      { return p.CreationDate }
+func (p *PHAsset) GetModificationDate() time.Time  { return p.ModificationDate }
 
 type PHAsset struct {
+	mutex               sync.RWMutex
 	ID                  int       `json:"id"`
 	UserID              int       `json:"userId"`
 	Url                 string    `json:"url"`
 	Filename            string    `json:"filename"`
+	Filepath            string    `json:"filepath"`
 	Format              string    `json:"format"`
 	MediaType           MediaType `json:"mediaType"`
 	Orientation         int       `json:"orientation"`
@@ -66,7 +71,8 @@ func (p Place) IsEmpty() bool {
 }
 
 type PHFetchOptions struct {
-	UserID      int `json:"userID"`
+	UserID int `json:"userID"`
+
 	Query       string
 	MediaType   MediaType
 	PixelWidth  int
@@ -74,9 +80,6 @@ type PHFetchOptions struct {
 
 	CameraMake  string
 	CameraModel string
-
-	StartDate *time.Time
-	EndDate   *time.Time
 
 	IsCamera      *bool
 	IsFavorite    *bool
@@ -95,6 +98,9 @@ type PHFetchOptions struct {
 	WithinRadius float64   `json:"withinRadius"` // in kilometers
 	BoundingBox  []float64 `json:"boundingBox"`  // [minLat, minLon, maxLat, maxLon]
 
+	StartDate *time.Time
+	EndDate   *time.Time
+
 	SortBy    string `json:"sortBy"`    // Field to sort by (e.g., "creationDate", "filename")
 	SortOrder string `json:"sortOrder"` // "asc" or "desc"
 
@@ -111,10 +117,12 @@ type AssetUpdate struct {
 	CameraMake  *string `json:"cameraMake,omitempty"`
 	CameraModel *string `json:"cameraModel,omitempty"`
 
-	IsCamera     *bool `json:"isCamera,omitempty"`
-	IsFavorite   *bool `json:"isFavorite,omitempty"`
-	IsScreenshot *bool `json:"IsScreenshot,omitempty"`
-	IsHidden     *bool `json:"isHidden,omitempty"`
+	IsCamera      *bool
+	IsFavorite    *bool
+	IsScreenshot  *bool
+	IsHidden      *bool
+	IsLandscape   *bool
+	NotInOneAlbum *bool
 
 	Albums       *[]int `json:"albums,omitempty"`       // Full album replacement
 	AddAlbums    []int  `json:"addAlbums,omitempty"`    // Albums to add
@@ -129,7 +137,7 @@ type AssetUpdate struct {
 	RemovePersons []int  `json:"removePersons,omitempty"` // Persons to remove
 }
 
-type AssetDelete struct {
+type Delete struct {
 	AssetID int `json:"assetID"`
 }
 
@@ -140,4 +148,70 @@ type PHFetchResult[T any] struct {
 	Total  int `json:"total"`
 	Limit  int `json:"limit"`
 	Offset int `json:"offset"`
+}
+
+// Initialize updater
+var assetUpdater = update.NewUpdater[PHAsset, AssetUpdate]()
+
+func init() {
+
+	// Configure scalar field updates
+	assetUpdater.AddScalarUpdater(func(a *PHAsset, u AssetUpdate) {
+		if u.Filename != nil {
+			a.Filename = *u.Filename
+		}
+	})
+
+	assetUpdater.AddScalarUpdater(func(a *PHAsset, u AssetUpdate) {
+		if u.MediaType != "" {
+			a.MediaType = u.MediaType
+		}
+	})
+
+	// Add other scalar fields similarly...
+
+	// Configure collection operations
+	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u AssetUpdate) {
+		op := update.CollectionUpdateOp[int]{
+			FullReplace: u.Albums,
+			Add:         u.AddAlbums,
+			Remove:      u.RemoveAlbums,
+		}
+		a.Albums = update.ApplyCollectionUpdate(a.Albums, op)
+	})
+
+	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u AssetUpdate) {
+		op := update.CollectionUpdateOp[int]{
+			FullReplace: u.Trips,
+			Add:         u.AddTrips,
+			Remove:      u.RemoveTrips,
+		}
+		a.Trips = update.ApplyCollectionUpdate(a.Trips, op)
+	})
+
+	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u AssetUpdate) {
+		op := update.CollectionUpdateOp[int]{
+			FullReplace: u.Persons,
+			Add:         u.AddPersons,
+			Remove:      u.RemovePersons,
+		}
+		a.Persons = update.ApplyCollectionUpdate(a.Persons, op)
+	})
+
+	// Set modification timestamp
+	assetUpdater.AddPostUpdateHook(func(a *PHAsset) {
+		a.ModificationDate = time.Now()
+	})
+}
+
+func (p *PHAsset) Update(update AssetUpdate) *PHAsset {
+	assetUpdater.Apply(p, update)
+	return p
+}
+
+func (p *PHAsset) Save() error {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	return utils.WriteData(p, p.Filepath)
 }

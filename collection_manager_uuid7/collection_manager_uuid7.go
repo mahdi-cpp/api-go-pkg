@@ -6,19 +6,17 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/mahdi-cpp/api-go-pkg/metadata"
 	"github.com/mahdi-cpp/api-go-pkg/registery"
 )
 
-// https://chat.deepseek.com/a/chat/s/d240fa60-af6b-4537-a04e-d34fc995cc80
-
 type CollectionItem interface {
-	GetID() int
-	SetID(int)
+	GetID() string
+	SetID(string)
 	SetCreationDate(time.Time)
 	SetModificationDate(time.Time)
 	GetCreationDate() time.Time
@@ -29,7 +27,7 @@ type storage[T CollectionItem] interface {
 	ReadAll(requireExist bool) ([]T, error)
 	CreateItem(item T) error
 	UpdateItem(item T) error
-	DeleteItem(id int) error
+	DeleteItem(id string) error
 }
 
 type singleFileStorage[T CollectionItem] struct {
@@ -75,7 +73,7 @@ func (s *singleFileStorage[T]) UpdateItem(updatedItem T) error {
 	return s.ctrl.Write(&items)
 }
 
-func (s *singleFileStorage[T]) DeleteItem(id int) error {
+func (s *singleFileStorage[T]) DeleteItem(id string) error {
 	items, err := s.ReadAll(false)
 	if err != nil {
 		return err
@@ -93,8 +91,8 @@ type directoryStorage[T CollectionItem] struct {
 	baseDir string
 }
 
-func (d *directoryStorage[T]) itemPath(id int) string {
-	return filepath.Join(d.baseDir, strconv.Itoa(id)+".json")
+func (d *directoryStorage[T]) itemPath(id string) string {
+	return filepath.Join(d.baseDir, id+".json")
 }
 
 func (d *directoryStorage[T]) ReadAll(requireExist bool) ([]T, error) {
@@ -120,18 +118,11 @@ func (d *directoryStorage[T]) ReadAll(requireExist bool) ([]T, error) {
 		}
 
 		filename := entry.Name()
-		// Skip non-JSON files
 		if filepath.Ext(filename) != ".json" {
 			continue
 		}
 
-		// Extract ID from filename (without extension)
-		idStr := strings.TrimSuffix(filename, filepath.Ext(filename))
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			continue
-		}
-
+		id := strings.TrimSuffix(filename, filepath.Ext(filename))
 		item, err := d.readItem(id)
 		if err != nil {
 			continue
@@ -141,7 +132,7 @@ func (d *directoryStorage[T]) ReadAll(requireExist bool) ([]T, error) {
 	return items, nil
 }
 
-func (d *directoryStorage[T]) readItem(id int) (T, error) {
+func (d *directoryStorage[T]) readItem(id string) (T, error) {
 	var zero T
 	path := d.itemPath(id)
 	ctrl := metadata.NewMetadataControl[T](path)
@@ -157,7 +148,6 @@ func (d *directoryStorage[T]) readItem(id int) (T, error) {
 }
 
 func (d *directoryStorage[T]) CreateItem(item T) error {
-	// Ensure directory exists
 	if err := os.MkdirAll(d.baseDir, 0755); err != nil {
 		return err
 	}
@@ -172,7 +162,7 @@ func (d *directoryStorage[T]) UpdateItem(item T) error {
 	return ctrl.Write(&item)
 }
 
-func (d *directoryStorage[T]) DeleteItem(id int) error {
+func (d *directoryStorage[T]) DeleteItem(id string) error {
 	path := d.itemPath(id)
 	return os.Remove(path)
 }
@@ -190,7 +180,6 @@ type SortOptions struct {
 func NewCollectionManager[T CollectionItem](path string, requireExist bool) (*Manager[T], error) {
 	var store storage[T]
 
-	// Determine storage type based on path
 	if fi, err := os.Stat(path); err == nil {
 		if fi.IsDir() {
 			store = &directoryStorage[T]{baseDir: path}
@@ -216,22 +205,20 @@ func NewCollectionManager[T CollectionItem](path string, requireExist bool) (*Ma
 	}
 
 	for _, item := range items {
-		manager.items.Register(strconv.Itoa(item.GetID()), item)
+		manager.items.Register(item.GetID(), item)
 	}
 
 	return manager, nil
 }
 
 func (manager *Manager[T]) Create(newItem T) (T, error) {
-	// Generate ID
-	maxID := 0
-	for _, item := range manager.items.GetAllValues() {
-		if item.GetID() > maxID {
-			maxID = item.GetID()
-		}
+	u7, err := uuid.NewV7()
+	if err != nil {
+		var zero T
+		return zero, fmt.Errorf("error generating UUIDv7: %w", err)
 	}
 
-	newItem.SetID(maxID + 1)
+	newItem.SetID(u7.String())
 	newItem.SetCreationDate(time.Now())
 	newItem.SetModificationDate(time.Now())
 
@@ -239,7 +226,7 @@ func (manager *Manager[T]) Create(newItem T) (T, error) {
 		return newItem, err
 	}
 
-	manager.items.Register(strconv.Itoa(newItem.GetID()), newItem)
+	manager.items.Register(newItem.GetID(), newItem)
 	return newItem, nil
 }
 
@@ -248,25 +235,20 @@ func (manager *Manager[T]) Update(updatedItem T) (T, error) {
 	if err := manager.storage.UpdateItem(updatedItem); err != nil {
 		return updatedItem, err
 	}
-	manager.items.Update(strconv.Itoa(updatedItem.GetID()), updatedItem)
+	manager.items.Update(updatedItem.GetID(), updatedItem)
 	return updatedItem, nil
 }
 
-func (manager *Manager[T]) Delete(id int) error {
+func (manager *Manager[T]) Delete(id string) error {
 	if err := manager.storage.DeleteItem(id); err != nil {
 		return err
 	}
-	manager.items.Delete(strconv.Itoa(id))
+	manager.items.Delete(id)
 	return nil
 }
 
-func (manager *Manager[T]) Get(id int) (T, error) {
-	item, err := manager.items.Get(strconv.Itoa(id))
-	if err != nil {
-		var zero T
-		return zero, errors.New("item not found")
-	}
-	return item, nil
+func (manager *Manager[T]) Get(id string) (T, error) {
+	return manager.items.Get(id)
 }
 
 func (manager *Manager[T]) GetList(filterFunc func(T) bool) ([]T, error) {
