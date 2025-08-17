@@ -39,9 +39,9 @@ type PHAsset struct {
 	IsFavorite          bool      `json:"isFavorite"`
 	IsScreenshot        bool      `json:"isScreenshot"`
 	IsHidden            bool      `json:"isHidden"`
-	Albums              []int     `json:"albums"`
-	Trips               []int     `json:"trips"`
-	Persons             []int     `json:"persons"`
+	Albums              []string  `json:"albums"`
+	Trips               []string  `json:"trips"`
+	Persons             []string  `json:"persons"`
 	Duration            float64   `json:"duration"`
 	CanDelete           bool      `json:"canDelete"` // Content Availability
 	CanEditContent      bool      `json:"canEditContent"`
@@ -124,17 +124,17 @@ type Update struct {
 	IsLandscape   *bool
 	NotInOneAlbum *bool
 
-	Albums       *[]int `json:"albums,omitempty"`       // Full album replacement
-	AddAlbums    []int  `json:"addAlbums,omitempty"`    // Albums to add
-	RemoveAlbums []int  `json:"removeAlbums,omitempty"` // Albums to remove
+	Albums       *[]string `json:"albums,omitempty"`       // Full album replacement
+	AddAlbums    []string  `json:"addAlbums,omitempty"`    // Albums to add
+	RemoveAlbums []string  `json:"removeAlbums,omitempty"` // Albums to remove
 
-	Trips       *[]int `json:"trips,omitempty"`       // Full trip replacement
-	AddTrips    []int  `json:"addTrips,omitempty"`    // Trips to add
-	RemoveTrips []int  `json:"removeTrips,omitempty"` // Trips to remove
+	Trips       *[]string `json:"trips,omitempty"`       // Full trip replacement
+	AddTrips    []string  `json:"addTrips,omitempty"`    // Trips to add
+	RemoveTrips []string  `json:"removeTrips,omitempty"` // Trips to remove
 
-	Persons       *[]int `json:"persons,omitempty"`       // Full Person replacement
-	AddPersons    []int  `json:"addPersons,omitempty"`    // Persons to add
-	RemovePersons []int  `json:"removePersons,omitempty"` // Persons to remove
+	Persons       *[]string `json:"persons,omitempty"`       // Full Person replacement
+	AddPersons    []string  `json:"addPersons,omitempty"`    // Persons to add
+	RemovePersons []string  `json:"removePersons,omitempty"` // Persons to remove
 }
 
 type Delete struct {
@@ -172,7 +172,7 @@ func init() {
 
 	// Configure collection operations
 	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u Update) {
-		op := update.CollectionUpdateOp[int]{
+		op := update.CollectionUpdateOp[string]{
 			FullReplace: u.Albums,
 			Add:         u.AddAlbums,
 			Remove:      u.RemoveAlbums,
@@ -181,7 +181,7 @@ func init() {
 	})
 
 	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u Update) {
-		op := update.CollectionUpdateOp[int]{
+		op := update.CollectionUpdateOp[string]{
 			FullReplace: u.Trips,
 			Add:         u.AddTrips,
 			Remove:      u.RemoveTrips,
@@ -190,7 +190,7 @@ func init() {
 	})
 
 	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u Update) {
-		op := update.CollectionUpdateOp[int]{
+		op := update.CollectionUpdateOp[string]{
 			FullReplace: u.Persons,
 			Add:         u.AddPersons,
 			Remove:      u.RemovePersons,

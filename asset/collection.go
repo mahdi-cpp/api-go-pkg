@@ -23,7 +23,7 @@ type SortableCollectionItem interface {
 }
 
 type CollectionRequest struct {
-	ID           int    `json:"id"`
+	ID           string `json:"id"`
 	Title        string `json:"title,omitempty"`
 	Subtitle     string `json:"subtitle,omitempty"`
 	TripType     string `json:"trip,omitempty"`
