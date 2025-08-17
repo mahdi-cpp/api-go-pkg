@@ -23,12 +23,12 @@ type SortableCollectionItem interface {
 }
 
 type CollectionRequest struct {
-	ID           string `json:"id"`
-	Title        string `json:"title,omitempty"`
-	Subtitle     string `json:"subtitle,omitempty"`
-	TripType     string `json:"trip,omitempty"`
-	IsCollection *bool  `json:"isCollection,omitempty"`
-	AssetIds     []int  `json:"assetIds,omitempty"` // Asset Ids
+	ID           string   `json:"id"`
+	Title        string   `json:"title,omitempty"`
+	Subtitle     string   `json:"subtitle,omitempty"`
+	TripType     string   `json:"trip,omitempty"`
+	IsCollection *bool    `json:"isCollection,omitempty"`
+	AssetIds     []string `json:"assetIds,omitempty"` // Asset Ids
 }
 
 type CollectionResponse struct {
