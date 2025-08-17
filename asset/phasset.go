@@ -71,7 +71,7 @@ func (p Place) IsEmpty() bool {
 }
 
 type PHFetchOptions struct {
-	UserID int `json:"userID"`
+	UserID string `json:"userID"`
 
 	Query       string
 	MediaType   MediaType
@@ -108,8 +108,8 @@ type PHFetchOptions struct {
 	FetchLimit  int `json:"fetchLimit"`
 }
 
-type AssetUpdate struct {
-	AssetIds []int `json:"assetIds,omitempty"` // Asset Ids
+type Update struct {
+	AssetIds []string `json:"assetIds,omitempty"` // Asset Ids
 
 	Filename  *string   `json:"filename,omitempty"`
 	MediaType MediaType `json:"mediaType,omitempty"`
@@ -138,7 +138,7 @@ type AssetUpdate struct {
 }
 
 type Delete struct {
-	AssetID int `json:"assetID"`
+	AssetID string `json:"assetID"`
 }
 
 // https://chat.deepseek.com/a/chat/s/9b010f32-b23d-4f9b-ae0c-31a9b2c9408c
@@ -151,18 +151,18 @@ type PHFetchResult[T any] struct {
 }
 
 // Initialize updater
-var assetUpdater = update.NewUpdater[PHAsset, AssetUpdate]()
+var assetUpdater = update.NewUpdater[PHAsset, Update]()
 
 func init() {
 
 	// Configure scalar field updates
-	assetUpdater.AddScalarUpdater(func(a *PHAsset, u AssetUpdate) {
+	assetUpdater.AddScalarUpdater(func(a *PHAsset, u Update) {
 		if u.Filename != nil {
 			a.Filename = *u.Filename
 		}
 	})
 
-	assetUpdater.AddScalarUpdater(func(a *PHAsset, u AssetUpdate) {
+	assetUpdater.AddScalarUpdater(func(a *PHAsset, u Update) {
 		if u.MediaType != "" {
 			a.MediaType = u.MediaType
 		}
@@ -171,7 +171,7 @@ func init() {
 	// Add other scalar fields similarly...
 
 	// Configure collection operations
-	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u AssetUpdate) {
+	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u Update) {
 		op := update.CollectionUpdateOp[int]{
 			FullReplace: u.Albums,
 			Add:         u.AddAlbums,
@@ -180,7 +180,7 @@ func init() {
 		a.Albums = update.ApplyCollectionUpdate(a.Albums, op)
 	})
 
-	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u AssetUpdate) {
+	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u Update) {
 		op := update.CollectionUpdateOp[int]{
 			FullReplace: u.Trips,
 			Add:         u.AddTrips,
@@ -189,7 +189,7 @@ func init() {
 		a.Trips = update.ApplyCollectionUpdate(a.Trips, op)
 	})
 
-	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u AssetUpdate) {
+	assetUpdater.AddCollectionUpdater(func(a *PHAsset, u Update) {
 		op := update.CollectionUpdateOp[int]{
 			FullReplace: u.Persons,
 			Add:         u.AddPersons,
@@ -204,7 +204,7 @@ func init() {
 	})
 }
 
-func (p *PHAsset) Update(update AssetUpdate) *PHAsset {
+func (p *PHAsset) Update(update Update) *PHAsset {
 	assetUpdater.Apply(p, update)
 	return p
 }
