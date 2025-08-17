@@ -62,52 +62,6 @@ type Place struct {
 	Village   string  `json:"village"`
 }
 
-// IsEmpty checks if the Place struct contains zero values for all its fields.
-func (p Place) IsEmpty() bool {
-	return p.Latitude == 0.0 &&
-		p.Longitude == 0.0 &&
-		p.City == "" &&
-		p.Country == ""
-}
-
-type PHFetchOptions struct {
-	UserID string `json:"userID"`
-
-	Query       string
-	MediaType   MediaType
-	PixelWidth  int
-	PixelHeight int
-
-	CameraMake  string
-	CameraModel string
-
-	IsCamera      *bool
-	IsFavorite    *bool
-	IsScreenshot  *bool
-	IsHidden      *bool
-	IsLandscape   *bool
-	NotInOneAlbum *bool
-
-	HideScreenshot *bool `json:"hideScreenshot"`
-
-	Albums  []int
-	Trips   []int
-	Persons []int
-
-	NearPoint    []float64 `json:"nearPoint"`    // [latitude, longitude]
-	WithinRadius float64   `json:"withinRadius"` // in kilometers
-	BoundingBox  []float64 `json:"boundingBox"`  // [minLat, minLon, maxLat, maxLon]
-
-	StartDate *time.Time
-	EndDate   *time.Time
-
-	SortBy    string `json:"sortBy"`    // Field to sort by (e.g., "creationDate", "filename")
-	SortOrder string `json:"sortOrder"` // "asc" or "desc"
-
-	FetchOffset int `json:"fetchOffset"`
-	FetchLimit  int `json:"fetchLimit"`
-}
-
 type Update struct {
 	AssetIds []string `json:"assetIds,omitempty"` // Asset Ids
 
@@ -135,6 +89,44 @@ type Update struct {
 	Persons       *[]string `json:"persons,omitempty"`       // Full Person replacement
 	AddPersons    []string  `json:"addPersons,omitempty"`    // Persons to add
 	RemovePersons []string  `json:"removePersons,omitempty"` // Persons to remove
+}
+
+type Options struct {
+	UserID string `json:"userID"`
+
+	Query       string
+	MediaType   MediaType
+	PixelWidth  int
+	PixelHeight int
+
+	CameraMake  string
+	CameraModel string
+
+	IsCamera      *bool
+	IsFavorite    *bool
+	IsScreenshot  *bool
+	IsHidden      *bool
+	IsLandscape   *bool
+	NotInOneAlbum *bool
+
+	HideScreenshot *bool `json:"hideScreenshot"`
+
+	Albums  []string
+	Trips   []string
+	Persons []string
+
+	NearPoint    []float64 `json:"nearPoint"`    // [latitude, longitude]
+	WithinRadius float64   `json:"withinRadius"` // in kilometers
+	BoundingBox  []float64 `json:"boundingBox"`  // [minLat, minLon, maxLat, maxLon]
+
+	StartDate *time.Time
+	EndDate   *time.Time
+
+	SortBy    string `json:"sortBy"`    // Field to sort by (e.g., "creationDate", "filename")
+	SortOrder string `json:"sortOrder"` // "asc" or "desc"
+
+	FetchOffset int `json:"fetchOffset"`
+	FetchLimit  int `json:"fetchLimit"`
 }
 
 type Delete struct {
@@ -214,4 +206,12 @@ func (p *PHAsset) Save() error {
 	defer p.mutex.Unlock()
 
 	return utils.WriteData(p, p.Filepath)
+}
+
+// IsEmpty checks if the Place struct contains zero values for all its fields.
+func (p Place) IsEmpty() bool {
+	return p.Latitude == 0.0 &&
+		p.Longitude == 0.0 &&
+		p.City == "" &&
+		p.Country == ""
 }
