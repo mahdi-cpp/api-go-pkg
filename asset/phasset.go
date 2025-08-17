@@ -13,17 +13,17 @@ const (
 	SongType  MediaType = "song"
 )
 
-func (p *PHAsset) SetID(id int)                    { p.ID = id }
+func (p *PHAsset) SetID(id string)                 { p.ID = id }
 func (p *PHAsset) SetCreationDate(t time.Time)     { p.CreationDate = t }
 func (p *PHAsset) SetModificationDate(t time.Time) { p.ModificationDate = t }
-func (p *PHAsset) GetID() int                      { return p.ID }
+func (p *PHAsset) GetID() string                   { return p.ID }
 func (p *PHAsset) GetCreationDate() time.Time      { return p.CreationDate }
 func (p *PHAsset) GetModificationDate() time.Time  { return p.ModificationDate }
 
 type PHAsset struct {
 	mutex               sync.RWMutex
-	ID                  int       `json:"id"`
-	UserID              int       `json:"userId"`
+	ID                  string    `json:"id"`
+	UserID              string    `json:"userID"`
 	Url                 string    `json:"url"`
 	Filename            string    `json:"filename"`
 	Filepath            string    `json:"filepath"`
