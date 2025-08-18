@@ -13,12 +13,12 @@ const (
 	SongType  MediaType = "song"
 )
 
-func (p *PHAsset) SetID(id string)                 { p.ID = id }
-func (p *PHAsset) SetCreationDate(t time.Time)     { p.CreationDate = t }
-func (p *PHAsset) SetModificationDate(t time.Time) { p.ModificationDate = t }
-func (p *PHAsset) GetID() string                   { return p.ID }
-func (p *PHAsset) GetCreationDate() time.Time      { return p.CreationDate }
-func (p *PHAsset) GetModificationDate() time.Time  { return p.ModificationDate }
+func (p *PHAsset) SetID(id string)          { p.ID = id }
+func (p *PHAsset) SetCreatedAt(t time.Time) { p.CreationDate = t }
+func (p *PHAsset) SetUpdatedAt(t time.Time) { p.ModificationDate = t }
+func (p *PHAsset) GetID() string            { return p.ID }
+func (p *PHAsset) GetCreatedAt() time.Time  { return p.CreationDate }
+func (p *PHAsset) GetUpdatedAt() time.Time  { return p.ModificationDate }
 
 type PHAsset struct {
 	mutex               sync.RWMutex
@@ -51,6 +51,17 @@ type PHAsset struct {
 	CreationDate        time.Time `json:"creationDate"`
 	ModificationDate    time.Time `json:"modificationDate"`
 }
+
+type MediaType string
+
+const (
+	UnknownType   MediaType = "unknown"
+	ImageTypeJPEG MediaType = "image/jpeg"
+	ImageTypePNG  MediaType = "image/png"
+	ImageTypeGIF  MediaType = "image/gif"
+	VideoTypeMP4  MediaType = "video/mp4"
+	VideoTypeMOV  MediaType = "video/quicktime"
+)
 
 type Place struct {
 	Latitude  float64 `json:"location"`

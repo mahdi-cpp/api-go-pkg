@@ -14,13 +14,20 @@ import (
 	"github.com/mahdi-cpp/api-go-pkg/registery"
 )
 
+//func (a *Album) SetID(id string)          { a.ID = id }
+//func (a *Album) SetCreatedAt(t time.Time) { a.CreatedAt = t }
+//func (a *Album) SetUpdatedAt(t time.Time) { a.UpdatedAt = t }
+//func (a *Album) GetID() string            { return a.ID }
+//func (a *Album) GetCreatedAt() time.Time  { return a.CreatedAt }
+//func (a *Album) GetUpdatedAt() time.Time  { return a.UpdatedAt }
+
 type CollectionItem interface {
-	GetID() string
 	SetID(string)
-	SetCreationDate(time.Time)
-	SetModificationDate(time.Time)
-	GetCreationDate() time.Time
-	GetModificationDate() time.Time
+	SetCreatedAt(time.Time)
+	SetUpdatedAt(time.Time)
+	GetID() string
+	GetCreatedAt() time.Time
+	GetUpdatedAt() time.Time
 }
 
 type storage[T CollectionItem] interface {
@@ -219,8 +226,8 @@ func (manager *Manager[T]) Create(newItem T) (T, error) {
 	}
 
 	newItem.SetID(u7.String())
-	newItem.SetCreationDate(time.Now())
-	newItem.SetModificationDate(time.Now())
+	newItem.SetCreatedAt(time.Now())
+	newItem.SetUpdatedAt(time.Now())
 
 	if err := manager.storage.CreateItem(newItem); err != nil {
 		return newItem, err
@@ -231,7 +238,7 @@ func (manager *Manager[T]) Create(newItem T) (T, error) {
 }
 
 func (manager *Manager[T]) Update(updatedItem T) (T, error) {
-	updatedItem.SetModificationDate(time.Now())
+	updatedItem.SetUpdatedAt(time.Now())
 	if err := manager.storage.UpdateItem(updatedItem); err != nil {
 		return updatedItem, err
 	}
@@ -287,14 +294,14 @@ func (manager *Manager[T]) SortItems(items []T, options SortOptions) []T {
 			return a.GetID() > b.GetID()
 		case "creationDate":
 			if options.SortOrder == "asc" {
-				return a.GetCreationDate().Before(b.GetCreationDate())
+				return a.GetCreatedAt().Before(b.GetCreatedAt())
 			}
-			return a.GetCreationDate().After(b.GetCreationDate())
+			return a.GetCreatedAt().After(b.GetCreatedAt())
 		case "modificationDate":
 			if options.SortOrder == "asc" {
-				return a.GetModificationDate().Before(b.GetModificationDate())
+				return a.GetUpdatedAt().Before(b.GetUpdatedAt())
 			}
-			return a.GetModificationDate().After(b.GetModificationDate())
+			return a.GetUpdatedAt().After(b.GetUpdatedAt())
 		default:
 			return false
 		}
