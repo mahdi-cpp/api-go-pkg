@@ -64,3 +64,13 @@ func IntInSlice(value int, slice []int) bool {
 	}
 	return false
 }
+
+// StringInSlice checks if value exists in string slice
+func StringInSlice(value string, slice []string) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
